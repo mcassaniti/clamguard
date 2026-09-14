@@ -1,0 +1,72 @@
+# GoReleaser configuration for Clamguard
+# Reference: https://goreleaser.com/customization/package/nfpm/
+
+version: 2
+
+project_name: clamguard
+
+before:
+  hooks:
+    - go mod tidy
+    - sh -c "mkdir -p packaging && sed 's|<BIN_PATH>|/usr/bin/clamguard|g' clamguard.service > packaging/clamguard.service"
+
+builds:
+  - id: clamguard
+    main: .
+    binary: clamguard
+    env:
+      - CGO_ENABLED=0
+    goos:
+      - linux
+    goarch:
+      - amd64
+    ldflags:
+      - -s -w -X main.version={{.Version}} -X main.commit={{.Commit}} -X main.date={{.Date}}
+
+archives:
+  - id: default
+    formats:
+      - tar.gz
+    files:
+      - README.md
+      - clamguard.service
+      - install.sh
+
+nfpms:
+  - id: packages
+    package_name: clamguard
+    vendor: Clamguard
+    homepage: https://github.com/mcassaniti/clamguard
+    maintainer: Michael <https://github.com/mcassaniti>
+    description: High-performance, mount-aware on-access Fanotify scanner and quarantine daemon for ClamAV.
+    license: GPL-2.0
+    formats:
+      - deb
+      - rpm
+    bindir: /usr/bin
+    contents:
+      - src: packaging/clamguard.service
+        dst: /usr/lib/systemd/system/clamguard.service
+        type: config|noreplace
+        file_info:
+          mode: 0644
+    dependencies:
+      - clamav
+    recommends:
+      - clamav-daemon
+    scripts:
+      postinstall: packaging/postinstall.sh
+      preremove: packaging/preremove.sh
+
+checksum:
+  name_template: "checksums.txt"
+
+snapshot:
+  version_template: "{{ incpatch .Version }}-next"
+
+changelog:
+  sort: asc
+  filters:
+    exclude:
+      - "^docs:"
+      - "^test:"

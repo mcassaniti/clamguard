@@ -1,0 +1,6 @@
+clamguard
+dist/
+packaging/clamguard.service
+*.deb
+*.rpm
+*.tar.gz

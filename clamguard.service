@@ -1,0 +1,30 @@
+[Unit]
+Description=Clamguard EDR Daemon
+Documentation=https://github.com/michael/clamguard
+After=network.target local-fs.target clamav-daemon.service
+Wants=clamav-daemon.service
+
+[Service]
+Type=simple
+ExecStart=<BIN_PATH>
+Restart=on-failure
+RestartSec=3s
+
+# Graceful termination (allows unblocking waiting processes and unmarking filesystems)
+KillMode=process
+KillSignal=SIGTERM
+TimeoutStopSec=10s
+
+# High FD limits for burst event processing
+LimitNOFILE=65536
+
+# Execution identity
+User=root
+Group=root
+
+# Standard output and logging
+StandardOutput=journal
+StandardError=journal
+
+[Install]
+WantedBy=multi-user.target
