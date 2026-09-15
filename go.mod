@@ -3,6 +3,6 @@ module clamguard
 go 1.26.0
 
 require (
-	github.com/godbus/dbus/v5 v5.1.0
+	github.com/godbus/dbus/v5 v5.2.2
 	golang.org/x/sys v0.48.0
 )
