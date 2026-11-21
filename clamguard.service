@@ -1,6 +1,6 @@
 [Unit]
 Description=Clamguard EDR Daemon
-Documentation=https://github.com/michael/clamguard
+Documentation=https://github.com/mcassaniti/clamguard
 After=network.target local-fs.target clamav-daemon.service
 Wants=clamav-daemon.service
 

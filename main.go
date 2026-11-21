@@ -73,7 +73,7 @@ func main() {
 
 	// Start background cache stats reporter
 	go func() {
-		ticker := time.NewTicker(5 * time.Second)
+		ticker := time.NewTicker(60 * time.Second)
 		defer ticker.Stop()
 		for range ticker.C {
 			hits, misses := cache.Stats()
@@ -254,8 +254,8 @@ func processEvent(event BlockerEvent, blockerFd int, cache *FileCache, cfg *Conf
 		fmt.Printf("[DEBUG] Cache miss. Scanning file: %s (PID: %d)\n", resolvedPath, event.Pid)
 	}
 
-	// Setup 2-second timeout context for ClamAV socket scan
-	ctx, cancel := context.WithTimeout(context.Background(), 2*time.Second)
+	// Setup 5-second timeout context for ClamAV socket scan
+	ctx, cancel := context.WithTimeout(context.Background(), 5*time.Second)
 	defer cancel()
 
 	var isClean bool
